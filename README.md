@@ -1,7 +1,7 @@
 # Graduation Project
-這是個畢業專題:D
+###### 這是個畢業專題:D
 ------------------------------------------------------------------------------
-網址: [CONNECT](https://ngnl666.github.io/Web_Community/Web/index.html)
+## 網址: [CONNECT](https://ngnl666.github.io/Web_Community/Web/index.html)
 
 ## 開發環境與使用套件
     ∙ 伺服器 : Google Cloud Platform (GCP)
