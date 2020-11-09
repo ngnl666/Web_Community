@@ -24,7 +24,7 @@ $(document).ready(function()
 
 function profile(){
 	var profile_data = {
-		user_id : "J93bs3sBmsMkrzHQ9CFGBON70ke2",
+		user_id : getCookie("token"),
 		user_school : $('#user_school').val(),
 		user_age : $('#user_age').val(),
 		user_hobit : $('#user_hobit').val(),

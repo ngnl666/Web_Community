@@ -30,10 +30,11 @@
                     <li><a href="login.html" class="button special">登出</a></li>
                 </ul>
             </nav>
-            <form action="friend.html">
+            <form method="post" target="hideIframe">
                 <input type="text" id="scrh" name="search" placeholder="請輸入關鍵字" autocomplete="off">
-                <input class="go" type="submit" value="GO">
+                <input class="go goSearch" type="button" value="GO" onclick="SearchUser()">
             </form>
+            <iframe id="myIframe" name="hideIframe" style="display:none;"></iframe>    
         </header>
 
         <!-- friendrequest -->
@@ -45,11 +46,14 @@
                 </a>
             </header>
 
-            <div class="top">
-                <h2>交友邀請</h2>
+            <div class="go_search">
+                <h2>搜尋結果</h2>
+                <div id="showSearch"></div>
             </div>
 
-            <div class="row">
+            <div class="top" id = "Search">
+                <h2>交友邀請</h2>
+                <div class="row">
                     <div class="col-md-2 col-sm-2 col-3">
                         <img src="img/user.svg" class="img-circle" width="60px">
                     </div>
@@ -61,97 +65,40 @@
                         <input class="chat rr1" type="button" >
                         <input class="chat rr2" type="button" >
                     </div>
-            </div> 
+                </div> 
+            </div>
+
             <hr />
         
-        <!-- freindlist -->
-            <div class="top">
-                <h2>好友清單</h2>
-            </div>
-            
-            <div class="row">
-                    <div class="col-sm-2 col-md-2 col-3">
-                        <img src="img/user.svg" class="img-circle" width="60px">
-                    </div>
-                    <div class="col-sm-8 col-md-8 col-4">
-                        <h4><a href="#">FJU CSIE</a></h4>
-                        <p class="mutual"><a href="#"><span class="num">1</span>個共同好友</span></a></p>
-                    </div>
-                    <div class="col-sm-2 col-md-2 col-5">                
-                        <input class="list-group-item chat rr3" data-toggle="modal" data-target="#myModal"
-                        data-whatever="好友1號" type="button" >
-                        <input class="chat rr4" type="button" >
-                    </div>
+            <!-- freindlist -->
+            <h2>好友清單</h2>
+            <div class="top" id="freindlist">
+                
             </div>
 
-            <div class="row">
-                <div class="col-sm-2 col-md-2 col-3">
-                    <img src="img/user.svg" class="img-circle" width="60px">
-                </div>
-                <div class="col-sm-8 col-md-8 col-4">
-                    <h4><a href="#">FJU CSIE</a></h4>
-                    <p class="mutual"><a href="#"><span class="num">2</span>個共同好友</span></a></p>
-                </div>
-                <div class="col-sm-2 col-md-2 col-5">                
-                    <input class="list-group-item chat rr3" data-toggle="modal" data-target="#myModal"
-                    data-whatever="好友2號" type="button" >
-                    <input class="chat rr4" type="button" >
-                </div>
-            </div>
-                
-            <div class="row">
-                <div class="col-sm-2 col-md-2 col-3">
-                    <img src="img/user.svg" class="img-circle" width="60px">
-                </div>
-                <div class="col-sm-8 col-md-8 col-4">
-                    <h4><a href="#">FJU CSIE</a></h4>
-                    <p class="mutual"><a href="#"><span class="num">3</span>個共同好友</span></a></p>
-                </div>
-                <div class="col-sm-2 col-md-2 col-5">                
-                    <input class="list-group-item chat rr3" data-toggle="modal" data-target="#myModal"
-                    data-whatever="好友3號" type="button" >
-                    <input class="chat rr4" type="button" >
-                </div>
-            </div>
-                
-            <div class="row">
-                <div class="col-sm-2 col-md-2 col-3">
-                    <img src="img/user.svg" class="img-circle" width="60px">
-                </div>
-                <div class="col-sm-8 col-md-8 col-4">
-                    <h4><a href="#">FJU CSIE</a></h4>
-                    <p class="mutual"><a href="#"><span class="num">4</span>個共同好友</span></a></p>
-                </div>
-                <div class="col-sm-2 col-md-2 col-5">                
-                    <input class="list-group-item chat rr3" data-toggle="modal" data-target="#myModal"
-                    data-whatever="好友4號" type="button" >
-                    <input class="chat rr4" type="button" >
-                </div>
-            </div>
             <hr />
 
-        <!--group_chat-->
+            <!--group_chat-->
             <div class="top">
                 <h2 class="group">群組</h2>
                 <input type="button" class="create_group" value="創建群組" data-toggle="modal" data-target="#groupModal">
-            </div>
-            <div class="clearfix_top"></div>
+                <div class="clearfix_top"></div>
 
-            <div class="row">
-                <div class="col-sm-2 col-md-2 col-3">
-                    <img src="img/group.svg" class="img-circle" width="60px">
-                </div>
-                <div class="col-sm-8 col-md-8 col-4">
-                    <h4><a href="#">Group 1</a></h4>
-                    <p class="mutual"><a href="#"><span class="num">5</span>位成員</span></a></p>
-                </div>
-                <div class="col-sm-2 col-md-2 col-5">                
-                    <input class="list-group-item chat rr3" data-toggle="modal" data-target="#myModal"
-                    data-whatever="Group 1" type="button" >
-                    <input class="chat rr4" type="button" >
+                <div class="row">
+                    <div class="col-sm-2 col-md-2 col-3">
+                        <img src="img/group.svg" class="img-circle" width="60px">
+                    </div>
+                    <div class="col-sm-8 col-md-8 col-4">
+                        <h4><a href="#">Group 1</a></h4>
+                        <p class="mutual"><a href="#"><span class="num">5</span>位成員</span></a></p>
+                    </div>
+                    <div class="col-sm-2 col-md-2 col-5">                
+                        <input class="list-group-item chat rr3" data-toggle="modal" data-target="#myModal"
+                        data-whatever="Group 1" type="button" >
+                        <input class="chat rr4" type="button" >
+                    </div>
                 </div>
             </div>
-
         </div>
 
             
@@ -223,6 +170,6 @@
 		<script src="js/skel-layers.min.js"></script>
 		<script src="js/init.js"></script>
 		<script src="js/common.js"></script>
-		<script src="js/index.js"></script>   
+ 		<script src="js/friend.js"></script>
 	</body>
 </html>

@@ -87,7 +87,7 @@ var eorConfirmPwd = "密碼與再次輸入密碼不一樣";
 var accountAlready = "信箱已註冊過";
 var emailInvalid = "請輸入有效的信箱";
 var successRegister = "已成功註冊，請到信箱確認驗證信";
-var registerError = "註冊失敗，請聯絡開發者";
+var registerError = "註冊失敗，請聯絡管理員";
 var userNotExist = "信箱錯誤或帳號不存在";
 var sentemail = "重設密碼信件已寄出，請前往信箱收信";
 var postError = "傳送資料失敗，請聯繫系統管理員";
@@ -97,8 +97,9 @@ var loginError = "登入失敗，請聯繫系統管理員";
 var notEmailVerified = "您尚未前往 Email 收驗證信";
 
 var SuccessPost = '發文成功囉';
-var FailedPost = '發文失敗請再試一次';
+var FailedPost = '發文失敗或登入逾時';
 var NullPost = '甚麼都沒有要發甚麼文??';
+var ErrorMsg = "發生錯誤，請聯繫管理員";
 
 var ProfileSucess = '修改成功囉';
 var ProfileFailed = '修改失敗\n請再試一次';

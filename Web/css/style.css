@@ -1366,6 +1366,8 @@
 			height: 300px;
 			border:1px solid gray !important;
 			overflow:auto;
+			padding-left: 3px;
+			padding-right: 10px;
 		}
 		.like_counter
 		{
@@ -1376,6 +1378,7 @@
 		.open
 		{
 			float: right;
+			margin-right: 50px;
 			margin-bottom: 15px;
 		}
 		.bar
@@ -1779,3 +1782,30 @@
 		{
 			background: #4C9D9D;
 		}
+		.go_search{
+			display: none;
+			padding: 10px;
+			border-right: 10px solid #4C9D9D;
+			background: #e0e0e0;
+			margin-bottom: 50px;
+		}
+		.lib section{
+			padding: 20px;
+			border-radius: 2%;
+		}
+		.pdpd{
+			padding-right: 25px;
+		}
+		@media (min-width: 600px) {
+			#mobileScrh {
+				display: none;
+			}
+		}
+		#mobileScrh{
+			margin-left: 67px;
+			margin-top: -50px;
+			margin-bottom: 50px;
+			border: 2px solid #e0e0e0;
+		}
+
+		

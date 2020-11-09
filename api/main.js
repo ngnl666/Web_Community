@@ -157,56 +157,103 @@ app.post('/api/login', function(req, res) {
     });
 });
 
+app.post('/api/username',function(req,res){
+    var user_id = req.body.user_id.toString();
+    var select_user_name = 'select user_name from Connect_db.user_info where user_id = \"'+user_id+'\"';
+    con.query(select_user_name,function(err,result){
+        if(err) throw err;
+        res.send(result);
+    });
+});
+
 /*存發文text跟time*/
 app.post('/api/index',function(req,res){
     console.log(req.body);
- 
     var art_text = req.body.article_text.toString();
-    //抓發文時間
-    var art_time = new Date();
- 
-    var insert_art_text = 'insert into Connect_db.article(atricle_text) value( \"' + art_text + '\")';
-    con.query(insert_art_text, function(err, result) {
-     if (err) throw err;
-    });
     var u_id = req.body.user_id.toString();
     var post_lvl = req.body.post_level.toString();
-    var select_art_id = 'select article_id from article where article_text = \"' + art_text +'\"';
-    var art_id;
-    con.query(select_art_id,function(err,result){
-        if(err) throw err;
-        art_id = JSON.stringify(result);
-    });
-    var inser_pu_id = 'insert into Connect_db.post(user_id,article_id,post_level) value( \"' + u_id + '\",\"' + art_id + '\",\"' + post_lvl + '\")';
-    con.query(inser_pu_id,function(err,result){
-        if(err) throw err;
-    });
- 
-    var insert_art_time = 'insert into Connect_db.article(atricle_time) value( \"' + art_time + '\")';
-    con.query(insert_art_time, function(err, result) {
-     if (err) throw err;
-    });
- 
+    var post_pic = req.body.article_pic.toString();
+    if(u_id==""){
+        res.send("error");
+    }
+    else{
+        var insert_art_text = 'insert into Connect_db.article(article_text,user_id,article_picture,post_level,article_time) value( \"' + art_text + '\",\"'+u_id+'\",\"'+post_pic+'\",\"'+post_lvl+'\",now())';
+        con.query(insert_art_text, function(err, result) {
+            if (err) throw err;
+            res.send("success");
+        });
+    }
+
  });
  
+ app.post('/api/article',function(req,res){
+    var u_id = req.body.user_id.toString();
+    var art_text_sql = 'select article.article_text,article.article_id,user_info.user_name \
+                        from user_info,article,(select user_id\
+                                                from user_info,((select user_id_self as id\
+                                                                from friend\
+                                                                where user_id_other=\"'+u_id+'\")\
+                                                                union\
+                                                                (select user_id_other as id\
+                                                                from friend\
+                                                                where user_id_self=\"'+u_id+'\")\
+                                                                union\
+                                                                (select user_info.user_id\
+                                                                from user_info\
+                                                                where user_id = \"'+u_id+'\")) as newTable0\
+                                                where user_id=id) as newTable1\
+                        where user_info.user_id = newTable1.user_id and article.user_id = newTable1.user_id and user_info.user_id = article.user_id\
+                        order by article.article_time desc limit 10';
+    con.query(art_text_sql,function(err,result){
+        if(err) throw err;
+        res.send(result);
+    });
+ });
+
+app.post('/api/command',function(req,res){
+    console.log(req.body);
+    var art_id = Number(req.body.article_id);
+    var command_text = req.body.command_text.toString();
+    var u_id = req.body.user_id.toString();
+    var insert_command_text = 'insert into Connect_db.command(user_command,article_id,user_id,command_time) value( \"' + command_text + '\",\"' + art_id + '\",\"' + u_id + '\",now())';
+    con.query(insert_command_text,function(err,result){
+        if(err) throw err;
+        res.send("success");
+    });
+});
+
+app.post('/api/take_command',function(req,res){
+
+    var command_text_sql = 'select command.article_id,command.user_command,user_info.user_name\
+                            from command,user_info\
+                            where command.user_id = user_info.user_id;';
+    con.query(command_text_sql,function(err,result){
+        if(err) throw err;
+        res.send(result);
+        console.log(result);
+    });
+ });
+
  /*初始化 設定格式大小*/
- const multer = require('multer');
- const upload  = multer({
-     limits:{
-         fileSize: 2 * 1024 * 1024
-     },
-     fileFilter(req,file,cb){
-         if(!file.mimetype.match(/^image/)){
-             cb(new Error().message = '格式錯誤');
-         }
-         else{
-             cb(null,true);
-         }
-     }
- });
+const multer = require('multer');
+const { json } = require('body-parser');
+const upload  = multer({
+    limits:{
+        fileSize: 2 * 1024 * 1024
+    },
+    fileFilter(req,file,cb){
+        if(!file.mimetype.match(/^image/)){
+            cb(new Error().message = '格式錯誤');
+        }
+        else{
+            cb(null,true);
+        }
+    }
+});
  
  /*將圖片存入mysql*/
- app.post('/api/index',upload.single('article_picture'),async(req,res) => {
+ 
+ /*app.post('/api/art_pic',upload.array('image'),async(req,res,next) => {
      console.log('file => ',req.file);
      var insert_art_pic = 'insert into Connect_db.article(article_picture) value (\"'+ req.file.buffer +'\")';
      
@@ -227,7 +274,7 @@ app.get('api/index',async(req,res) => {
         success: true,
         art_pic,
     });
-})
+})*/
 
 app.post('/api/profile',function(req,res){
     console.log(req.body);
@@ -256,6 +303,43 @@ app.post('/api/profile',upload.single('user_picture'),async(req,res) => {
     res.send({
         success: true,
         message: '上傳成功'
+    });
+});
+
+/*好友名單*/
+app.post('/api/loadFriendlist', function(req, res) {
+    var uid = req.body.u_id.toString();
+    var getFriend = "select user_id,user_name \
+                    from user_info,((select user_id_self as id\
+                                    from friend\
+                                    where user_id_other=\""+uid+"\")\
+                                    union\
+                                    (select user_id_other as id\
+                                    from friend\
+                                    where user_id_self=\""+uid+"\")) as newTable\
+                    where user_id=id";
+    con.query(getFriend,function(err,result){
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/api/SearchFriend', function(req, res) {
+    var uid = req.body.u_id.toString();
+    var name = req.body.user_name.toString();
+    var SearchUser = 'select user_info.user_id,user_info.user_name,relation\
+                    from user_info left join ((select user_id_self as id,relation\
+                                            from friend\
+                                            where user_id_other=\"'+uid+'\")\
+                                            union\
+                                            (select user_id_other as id,relation\
+                                            from friend\
+                                            where user_id_self=\"'+uid+'\")) as newTab \
+                                            on user_info.user_id = newTab.id\
+                    where user_name = \"'+name+'\"';
+    con.query(SearchUser,function(err,result){
+        if (err) throw err;
+        res.send(result);
     });
 });
 
