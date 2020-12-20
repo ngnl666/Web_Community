@@ -1,4 +1,4 @@
-# 畢業專題  Web_Community
+# 畢業專題  CONNECT
 
 ## 開發環境與使用套件
     ∙ 伺服器 : Google Cloud Platform (GCP)
