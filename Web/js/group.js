@@ -1,8 +1,6 @@
-window.onload = function() { 
-	checkCookie('./login.html');
-	var height = document.body.clientHeight;
-	height = height*0.3;
-	$(".load").css('padding-top',height);
+// const { getCiphers } = require("crypto");
+
+/*window.onload = function() { 
     setTimeout(function(){
         $(".load").fadeIn(1500);
         $(".load").fadeOut(1500);
@@ -10,10 +8,11 @@ window.onload = function() {
     
     setTimeout(function(){
       $(".waitloading").css("opacity","1");
-	},4000)
-	
+    },4000)
+};*/
+window.onload = function() { 
+	checkCookie('./login.html');
 };
-
 $(function(){
 	$('#BackTop').click(function(){ 
 		$('html,body').animate({scrollTop:0}, 333);
@@ -27,20 +26,20 @@ $(function(){
 	}).scroll();
 });
 
-var cookcnt=0
-$(document).ready(function()
-{
-	/*發文切換*/
-	$(".post").click(function(){$("#postArticle").fadeToggle(500); });
-	$("#cancel").click(function(){$("#postArticle").hide(500); });
-	
+var select_glp;
+function selectgid(){
+	setArt("glparticle","");
+	select_glp = $('#grpSelect').val();
+	$(".lib").html("");
+	$('#show_mem').empty();
 	var data = {
-		user_id :getCookie("token")
+		user_id :getCookie("token"),
+		group_id :select_glp
 	}
 	var articleArray="";
 	/* show article */
 	$.ajax({
-		url: "http://"+ host + port +"/api/article",
+		url: "http://"+ host + port +"/api/glparticle",
 		type: 'POST',
 		data: JSON.stringify(data),
 		contentType: "application/json;charset=utf-8",
@@ -76,14 +75,14 @@ $(document).ready(function()
 										</div>';
 				}
 
-				if(msg[cnt].user_id == getCookie("token"))
+				if(msg[cnt].like_id)
 				{
 					var texthtml2 = '<div class="command"><!--文章底下-->\
 											<img class="like" style="background:red" src="img/heart2.svg" alt="" width="30px" height="30px" onclick = "storelike(this)">\
 											<label class="like_counter">'+msg[cnt].likes+'</label>\
 											<hr/>\
 											<div class="form-group row col-12 col-md-12">\
-												<label for="" class="col-3 col-md-2 col-form-label command_id"></label>\
+												<label for="" class="col-3 col-md-2 col-form-label command_id">'+$("#user_name").text()+'</label>\
 												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreCmd(this,event)">\
 											</div>\
 											<div class="container">\
@@ -97,14 +96,14 @@ $(document).ready(function()
 										</div>\
 									</section><br>';
 				}
-				else if(!msg[cnt].user_id != getCookie("token"))
+				else if(!msg[cnt].like_id)
 				{
 					var texthtml2 = '<div class="command"><!--文章底下-->\
 											<img class="like" src="img/heart2.svg" alt="" width="30px" height="30px" onclick = "storelike(this)">\
 											<label class="like_counter">'+msg[cnt].likes+'</label>\
 											<hr/>\
 											<div class="form-group row col-12 col-md-12">\
-												<label for="" class="col-3 col-md-2 col-form-label command_id"></label>\
+												<label for="" class="col-3 col-md-2 col-form-label command_id">'+$("#user_name").text()+'</label>\
 												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreCmd(this,event)">\
 											</div>\
 											<div class="container">\
@@ -136,16 +135,6 @@ $(document).ready(function()
 
 		}
 	});
-	$.ajax({
-		url: "http://"+ host + port +"/api/username",
-		type: 'POST',
-		data: JSON.stringify(data),
-		contentType: "application/json;charset=utf-8",
-		success: function(name){
-			$('#user_name').text(name[0].user_name);
-			$('.command_id').text(name[0].user_name);
-		}
-	});
 	if(articleArray!="")
 	{
 		var data = {
@@ -168,10 +157,103 @@ $(document).ready(function()
 			}
 		});
 	}
+	var data = {
+		group_id :select_glp
+	}
+	$.ajax({
+		url: "http://"+ host + port +"/api/show_group_member",
+		type: 'POST',
+		data: JSON.stringify(data),
+		contentType: "application/json;charset=utf-8",
+		success: function(glpmem){
+			console.log(glpmem);
+			var cnt1;
+			var texthtml1 = '<div class="card group-result">\
+								<div class="card-header bg-info" id="headingOne">\
+									<div class="row justify-content-end">\
+										<h4 class="mb-0 col-6">\
+											<button class="btn btn-info btn-title" id="group_name" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">\
+												<div class="tmpclass">'+ glpmem[0].club_name +'\
+												</div>\
+											</button>\
+										</h4>\
+										<div class="col-3">\
+											<button type="button" id="plus" class="btn btn-info plusgroup" onclick="addgroup(this);"><i class="fas fa-plus add-pr"></i></button>\
+										</div>\
+									</div>\
+								</div>\
+								<div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">\
+									<div class="card-body card-pd">\
+										<ul class="list-group list-group-flush">';
+			for(cnt1=0;cnt1<glpmem.length;cnt1++){
+				var tmp = '<li class="list-group-item"><i class="fas fa-user"></i>'+ glpmem[cnt1].user_name +'</li>';
+				var texthtml1;
+				texthtml1 += tmp;
+			}
+			var texthtml2 = '</ul>\
+						</div>\
+					</div>\
+				</div>';
+			var finaltexthtml = texthtml1 + texthtml2;
+			$("#show_mem").append(finaltexthtml);
+			$('#plus').css("visibility","hidden");
+			$(".showgroup").show();
+		}
+	});
+}
+
+$(document).ready(function()
+{
+	var uid={
+		user_id :getCookie("token")
+	}
+	/*有哪些社團*/
+	$.ajax({
+		url: "http://"+ host + port +"/api/groups",
+		type: 'POST',
+		data: JSON.stringify(uid),
+		contentType: "application/json;charset=utf-8",
+		success: function(glps){
+			var i;
+			console.log(glps);
+			for(i=0;i<glps.length;i++)
+			{
+				var group_form = '<option value=\"'+ glps[i].club_id +'\">'+ glps[i].club_name +'</option>';
+				$('#grpSelect').append(group_form);
+				console.log(glps[i].club_id,glps[i].club_name);
+			}
+			//console.log(glps[0].club_id,glps[0].club_name);
+		}
+	});
+	$(".plusgroup").click(function(){$(".showgroup").hide(500);});
+	/*發文切換*/
+	$(".post").click(function(){$("#postArticle").fadeToggle(500); });
+	$("#cancel").click(function(){$("#postArticle").hide(500); });
+	/*好友搜尋展示*/
+	$(".goSearch").click(function(){
+		if($("#scrh").val() !== '')
+			$(".go_search").css("display","block");
+	});
+	$(".canc").click(function(){
+		$(".go_search").hide(500);
+	});
 	
 
+	var data = {
+		user_id :getCookie("token"),
+		group_id :select_glp
+	}
 
-	
+	$.ajax({
+		url: "http://"+ host + port +"/api/username",
+		type: 'POST',
+		data: JSON.stringify(data),
+		contentType: "application/json;charset=utf-8",
+		success: function(name){
+			$('#user_name').text(name[0].user_name);
+		}
+	});
+
 	$(window).scroll(function(){
 		var totalheight = $("body").height() - $(window).height()-50;
 		if($(window).scrollTop()>=totalheight)
@@ -179,7 +261,7 @@ $(document).ready(function()
 			add_article();
 		}
 	});
-}); 
+});
 
 $(function(){
 	$('#BackTop').click(function(){ 
@@ -196,8 +278,7 @@ $(function(){
 
 function collapse(cthis){
 	console.log(cthis);
-	//$("#"+$(cthis).parents("section").attr("id").toString()).find(".command_box").slideToggle(500);
-	$(cthis).next().find('.command_box').slideToggle(500);
+	$("#"+$(cthis).parents("section").attr("id").toString()).find(".command_box").slideToggle(500);
 }
 
 function StoreCmd(thiscmd,event){
@@ -267,22 +348,22 @@ function storelike(thislike){
 		}
 	});
 }
-
-
 function add_article(){
 	var articleArray="";
 	var data = {
+		group_id :select_glp,
 		cookie_art: getCookie("ArtCnt"),
 		user_id :getCookie("token")
 	}
 
 	$.ajax({
-		url: "http://"+ host + port +"/api/add_article",
+		url: "http://"+ host + port +"/api/add_glparticle",
 		type: 'POST',
 		data: JSON.stringify(data),
 		contentType: "application/json;charset=utf-8",
 		async: false,
 		success: function(add){
+			//console.log(add);
 			var cnt;
 			for(cnt=0;cnt<add.length;cnt++){
 				if(add[cnt].article_text && add[cnt].article_picture)
@@ -317,7 +398,7 @@ function add_article(){
 											<label class="like_counter">'+add[cnt].likes+'</label>\
 											<hr/>\
 											<div class="form-group row col-12 col-md-12">\
-												<label for="" class="col-3 col-md-2 col-form-label command_id">'+$("#user_name").text()+'</label>\
+												<label for="" class="col-3 col-md-2 col-form-label command_id">'+add[cnt].user_name+'</label>\
 												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreCmd(this,event)">\
 											</div>\
 											<div class="container">\
@@ -338,7 +419,7 @@ function add_article(){
 											<label class="like_counter">'+add[cnt].likes+'</label>\
 											<hr/>\
 											<div class="form-group row col-12 col-md-12">\
-												<label for="" class="col-3 col-md-2 col-form-label command_id">'+$("#user_name").text()+'</label>\
+												<label for="" class="col-3 col-md-2 col-form-label command_id">'+add[cnt].user_name+'</label>\
 												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreCmd(this,event)">\
 											</div>\
 											<div class="container">\
@@ -392,13 +473,12 @@ function add_article(){
 			}
 		});
 	}
-	
-}
 
+}
 
 var img_string="";
 var imgCont = document.getElementById("showImg"); 
-var ipt = document.getElementById("#picInput"); 
+var ipt = document.getElementById("#glppic"); 
 function fileUpLoad(_this){
 	var file = _this.files[0];
 	if(!/image\/\w+/.test(file.type)){ //html中已經用accept='image/*'限制上傳的是圖片了，此處判斷可省略
@@ -420,32 +500,107 @@ function fileUpLoad(_this){
 	}
 }
 
-
-
-
-/*store article and reload index.html*/
-function article(){
-	if($('#Article').val() == '' && $('#picInput').val() == ''){
+function glparticle(){
+	if($('#Article').val() == '' && $('#glppic').val() == ''){
 		alertMsg(NullPost);
 	}
 	else{
 		var post_data = {
+            group_id : select_glp,
 			user_id : getCookie("token"),
-			post_level : '0',
+			post_level : '2',
 			article_text : $('#Article').val(),
 			article_pic : img_string
 		};
-		console.log(post_data.article_pic);
+		console.log(post_data);
 		$.ajax({
-			url: "http://"+ host + port +"/api/index",
+			url: "http://"+ host + port +"/api/glpindex",
 			type: 'POST',
 			data: JSON.stringify(post_data),
 			contentType: "application/json;charset=utf-8",
 			success: function(msg){
-				if(msg=="success")
-					location.reload();
-				else
-					alertMsgThenGoToSomewhere(FailedPost, "./index.html")
+				$('#showImg').empty();
+				$('#postArticle').hide(500);
+				$("#Article").val("");
+				if(msg[0].article_text && msg[0].article_picture)
+				{
+					var texthtml1 = '<section style="%%" class="article_id" id=\"'+msg[0].article_id+'\">\
+										<div>\
+											<h3 class="user_id">'+msg[0].user_name+'</h3>\
+											<p class="article_test">'+ msg[0].article_text +'<br/><br/><img class="resImg" src= "'+ msg[0].article_picture +'"/></p>\
+										</div>';
+				}
+				else if(msg[0].article_text && !msg[0].article_picture)
+				{
+					var texthtml1 = '<section style="%%" class="article_id" id=\"'+msg[0].article_id+'\">\
+										<div>\
+											<h3 class="user_id">'+msg[0].user_name+'</h3>\
+											<p class="article_test">'+ msg[0].article_text +'</p>\
+										</div>';
+				}
+				else if(!msg[0].article_text && msg[0].article_picture)
+				{
+					var texthtml1 = '<section style="%%" class="article_id" id=\"'+msg[0].article_id+'\">\
+										<div>\
+											<h3 class="user_id">'+msg[0].user_name+'</h3>\
+											<p class="article_test"><br/><br/><img class="resImg" src="'+ msg[0].article_picture +'"/></p>\
+										</div>';
+				}
+
+				if(msg[0].like_id)
+				{
+					var texthtml2 = '<div class="command"><!--文章底下-->\
+											<img class="like" style="background:red" src="img/heart2.svg" alt="" width="30px" height="30px" onclick = "storelike(this)">\
+											<label class="like_counter">'+msg[0].likes+'</label>\
+											<hr/>\
+											<div class="form-group row col-12 col-md-12">\
+												<label for="" class="col-3 col-md-2 col-form-label command_id">'+$("#user_name").text()+'</label>\
+												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreCmd(this,event)">\
+											</div>\
+											<div class="container">\
+												<button type="button" class="btn btn-secondary  open" onclick = "collapse(this)">展開/收合</button>\
+												<div class="row col-12 pdpd">\
+													<div class="col-12 command_box">\
+														<!--這邊放留言-->\
+													</div>\
+												</div>\
+											</div>\
+										</div>\
+									</section><br>';
+				}
+				else if(!msg[0].like_id)
+				{
+					var texthtml2 = '<div class="command"><!--文章底下-->\
+											<img class="like" src="img/heart2.svg" alt="" width="30px" height="30px" onclick = "storelike(this)">\
+											<label class="like_counter">'+msg[0].likes+'</label>\
+											<hr/>\
+											<div class="form-group row col-12 col-md-12">\
+												<label for="" class="col-3 col-md-2 col-form-label command_id">'+$("#user_name").text()+'</label>\
+												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreCmd(this,event)">\
+											</div>\
+											<div class="container">\
+												<button type="button" class="btn btn-secondary  open" onclick = "collapse(this)">展開/收合</button>\
+												<div class="row col-12 pdpd">\
+													<div class="col-12 command_box">\
+														<!--這邊放留言-->\
+													</div>\
+												</div>\
+											</div>\
+										</div>\
+									</section><br>';
+				}
+				var finialhtml = texthtml1+texthtml2;
+				setArt("glparticle",getCookie("glparticle")+1);
+				if(getCookie("glparticle").length % 2 == 0){
+					var newHtml = finialhtml.replace('%%', 'background:#FFF7FB');
+					$(".lib").prepend(newHtml);
+					setArt("ArtCnt",cookcnt++);
+				}else{
+					var secondHtml = finialhtml.replace('%%', 'background:#ECFFFF');
+					$(".lib").prepend(secondHtml);
+					setArt("ArtCnt",cookcnt++);
+				}	
+
 			},
 			error: function(xhr, ajaxOptions, thrownError){
 				alertMsg(ErrorMsg);
@@ -453,3 +608,139 @@ function article(){
 		});
 	}
 };
+
+function Searchgroup(_this){
+	$('#show_mem').empty();
+	$(".showgroup").show();
+    if($(_this).prev('#scrh').val()!=""){
+        var data={
+			group_name :$(_this).prev('#scrh').val(),
+			user_id :getCookie("token")
+		}
+		console.log(data.group_name);
+		$.ajax({
+            url : "http://"+ host + port +"/api/SearchGroup",
+            type : 'POST',
+            data : JSON.stringify(data),
+            contentType : "application/json;charset=utf-8",
+            success: function(msg){
+				console.log(msg);
+				if(msg)
+				var i,tmp=0;
+				for(i=0;i<msg.length;i++)
+				{
+					if(msg[i].user_id == getCookie("token"))
+					{
+						var gname = '<div class="card group-result">\
+										<div class="card-header bg-info" id="headingOne">\
+											<div class="row justify-content-end">\
+												<h4 class="mb-0 col-6">\
+													<button class="btn btn-info btn-title" id="group_name" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">\
+														<div class="tmpclass" id='+ msg[0].club_id +'>'+ msg[0].club_name +'\
+														</div>\
+													</button>\
+												</h4>\
+												<div class="col-3">\
+													<button type="button" id="plus" class="btn btn-info plusgroup" onclick="addgroup(this);"><i class="fas fa-plus add-pr"></i></button>\
+												</div>\
+											</div>\
+										</div>\
+									</div>';
+						tmp=1;
+						$('#show_mem').append(gname);
+						$('#plus').css("visibility","hidden");
+						break;
+					}
+				}
+				if(tmp==0)
+				{
+					var gname = '<div class="card group-result">\
+									<div class="card-header bg-info" id="headingOne">\
+										<div class="row justify-content-end">\
+											<h4 class="mb-0 col-6">\
+												<button class="btn btn-info btn-title" id="group_name" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">\
+													<div class="tmpclass" id='+ msg[0].club_id +'>'+ msg[0].club_name +'\
+													</div>\
+												</button>\
+											</h4>\
+											<div class="col-3">\
+												<button type="button" id="plus" class="btn btn-info plusgroup" onclick="addgroup(this);"><i class="fas fa-plus add-pr"></i></button>\
+											</div>\
+										</div>\
+									</div>\
+								</div>'
+					$('#show_mem').append(gname);
+				}
+			}
+		});
+	}
+}
+
+function addgroup(_this){
+	var data={
+		group_id :$('#group_name').children('.tmpclass').attr('id'),
+		user_id :getCookie("token")
+	}
+	$.ajax({
+		url : "http://"+ host + port +"/api/PlusGroup",
+		type : 'POST',
+		data : JSON.stringify(data),
+		contentType : "application/json;charset=utf-8",
+		success: function(msg){
+			if(msg == "Success")
+				location.reload();
+		}
+	});
+}
+
+function Creategroup(){
+	if($('#creategroup').val() != "")
+	{
+		var data={
+			group_name :$('#creategroup').val(),
+			user_id :getCookie("token")
+		}
+		console.log(data.group_name);
+		$.ajax({
+			url : "http://"+ host + port +"/api/chickgroups",
+			type : 'POST',
+			contentType : "application/json;charset=utf-8",
+			success: function(chick){
+				var i,tmp=0;
+				for(i=0;i<chick.length;i++)
+				{
+					console.log(chick[i].club_name)
+					if(chick[i].club_name == $('#creategroup').val())
+					{
+						alert("這個名稱有人用過囉");
+						tmp=1;
+						break;
+					}
+				}
+				if(tmp == 0)
+				{
+					$.ajax({
+						url : "http://"+ host + port +"/api/creategroup",
+						type : 'POST',
+						data : JSON.stringify(data),
+						contentType : "application/json;charset=utf-8",
+						success: function(msg){
+							var delayInMilliseconds = 2000;
+							if(msg=="success")
+							{
+								swal("創建成功!", "快邀請朋友加入你的社團吧", "success");
+								setTimeout(function() {
+									location.reload();
+								}, delayInMilliseconds);
+							}
+						}
+					});
+				}
+			}
+		});
+		
+	}
+}
+
+
+

@@ -1,8 +1,5 @@
 window.onload = function() { 
 	checkCookie('./login.html');
-	var height = document.body.clientHeight;
-	height = height*0.3;
-	$(".load").css('padding-top',height);
     setTimeout(function(){
         $(".load").fadeIn(1500);
         $(".load").fadeOut(1500);
@@ -10,8 +7,7 @@ window.onload = function() {
     
     setTimeout(function(){
       $(".waitloading").css("opacity","1");
-	},4000)
-	
+    },4000)
 };
 
 $(function(){
@@ -27,6 +23,7 @@ $(function(){
 	}).scroll();
 });
 
+
 var cookcnt=0
 $(document).ready(function()
 {
@@ -40,7 +37,7 @@ $(document).ready(function()
 	var articleArray="";
 	/* show article */
 	$.ajax({
-		url: "http://"+ host + port +"/api/article",
+		url: "http://"+ host + port +"/api/anmsarticle",
 		type: 'POST',
 		data: JSON.stringify(data),
 		contentType: "application/json;charset=utf-8",
@@ -55,7 +52,7 @@ $(document).ready(function()
 				{
 					var texthtml1 = '<section style="%%" class="article_id" id=\"'+msg[cnt].article_id+'\">\
 										<div>\
-											<h3 class="user_id">'+msg[cnt].user_name+'</h3>\
+											<h3 class="user_id">第'+(cookcnt+1)+'篇文章</h3>\
 											<p class="article_test">'+ msg[cnt].article_text +'<br/><br/><img class="resImg" src= "'+ msg[cnt].article_picture +'"/></p>\
 										</div>';
 				}
@@ -63,7 +60,7 @@ $(document).ready(function()
 				{
 					var texthtml1 = '<section style="%%" class="article_id" id=\"'+msg[cnt].article_id+'\">\
 										<div>\
-											<h3 class="user_id">'+msg[cnt].user_name+'</h3>\
+											<h3 class="user_id">第'+(cookcnt+1)+'篇文章</h3>\
 											<p class="article_test">'+ msg[cnt].article_text +'</p>\
 										</div>';
 				}
@@ -71,7 +68,7 @@ $(document).ready(function()
 				{
 					var texthtml1 = '<section style="%%" class="article_id" id=\"'+msg[cnt].article_id+'\">\
 										<div>\
-											<h3 class="user_id">'+msg[cnt].user_name+'</h3>\
+											<h3 class="user_id">第'+(cookcnt+1)+'篇文章</h3>\
 											<p class="article_test"><br/><br/><img class="resImg" src="'+ msg[cnt].article_picture +'"/></p>\
 										</div>';
 				}
@@ -83,8 +80,8 @@ $(document).ready(function()
 											<label class="like_counter">'+msg[cnt].likes+'</label>\
 											<hr/>\
 											<div class="form-group row col-12 col-md-12">\
-												<label for="" class="col-3 col-md-2 col-form-label command_id"></label>\
-												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreCmd(this,event)">\
+												<label for="" class="col-3 col-md-2 col-form-label command_id">匿名</label>\
+												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreanmsCmd(this,event)">\
 											</div>\
 											<div class="container">\
 												<button type="button" class="btn btn-secondary  open" onclick = "collapse(this)">展開/收合</button>\
@@ -104,8 +101,8 @@ $(document).ready(function()
 											<label class="like_counter">'+msg[cnt].likes+'</label>\
 											<hr/>\
 											<div class="form-group row col-12 col-md-12">\
-												<label for="" class="col-3 col-md-2 col-form-label command_id"></label>\
-												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreCmd(this,event)">\
+												<label for="" class="col-3 col-md-2 col-form-label command_id">匿名</label>\
+												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreanmsCmd(this,event)">\
 											</div>\
 											<div class="container">\
 												<button type="button" class="btn btn-secondary  open" onclick = "collapse(this)">展開/收合</button>\
@@ -121,11 +118,11 @@ $(document).ready(function()
 				var finialhtml = texthtml1+texthtml2;
 				if(cnt % 2 == 0){
 					var newHtml = finialhtml.replace('%%', 'background:#FFF7FB');
-					$(".lib").append(newHtml);
+					$(".anmslib").append(newHtml);
 					setArt("ArtCnt",cookcnt++);
 				}else{
 					var secondHtml = finialhtml.replace('%%', 'background:#ECFFFF');
-					$(".lib").append(secondHtml);
+					$(".anmslib").append(secondHtml);
 					setArt("ArtCnt",cookcnt++);
 				}
 				if(msg.length-1 == cnt)
@@ -136,30 +133,23 @@ $(document).ready(function()
 
 		}
 	});
-	$.ajax({
-		url: "http://"+ host + port +"/api/username",
-		type: 'POST',
-		data: JSON.stringify(data),
-		contentType: "application/json;charset=utf-8",
-		success: function(name){
-			$('#user_name').text(name[0].user_name);
-			$('.command_id').text(name[0].user_name);
-		}
-	});
+
 	if(articleArray!="")
 	{
-		var data = {
+		var comd_data = {
 			article_id: articleArray
 		}
+		console.log(comd_data);
 		$.ajax({
-			url: "http://"+ host + port +"/api/take_command",
+			url: "http://"+ host + port +"/api/take_anmscommand",
 			type: 'POST',
-			data: JSON.stringify(data),
+			data: JSON.stringify(comd_data),
 			contentType: "application/json;charset=utf-8",
 			success: function(comd){
 				var cnt1;
+				console.log(comd);
 				for(cnt1=0;cnt1<comd.length;cnt1++){
-					var texthtml1 = '<p class="command_user">'+comd[cnt1].user_name+'\
+					var texthtml1 = '<p class="command_user">ʕっ•ᴥ•ʔっ\
 										<span class="command_line">'+comd[cnt1].user_command+'\
 										</span>\
 									</p>';
@@ -168,15 +158,22 @@ $(document).ready(function()
 			}
 		});
 	}
-	
 
-
+	$.ajax({
+		url: "http://"+ host + port +"/api/username",
+		type: 'POST',
+		data: JSON.stringify(data),
+		contentType: "application/json;charset=utf-8",
+		success: function(name){
+			$('#user_name').text(name[0].user_name);
+		}
+	});
 	
 	$(window).scroll(function(){
 		var totalheight = $("body").height() - $(window).height()-50;
 		if($(window).scrollTop()>=totalheight)
 		{
-			add_article();
+			add_anmsarticle();
 		}
 	});
 }); 
@@ -196,11 +193,10 @@ $(function(){
 
 function collapse(cthis){
 	console.log(cthis);
-	//$("#"+$(cthis).parents("section").attr("id").toString()).find(".command_box").slideToggle(500);
-	$(cthis).next().find('.command_box').slideToggle(500);
+	$("#"+$(cthis).parents("section").attr("id").toString()).find(".command_box").slideToggle(500);
 }
 
-function StoreCmd(thiscmd,event){
+function StoreanmsCmd(thiscmd,event){
 	if(event.keyCode == 13 || event.which == 13){
 		var command_val = $(thiscmd).val();
 		if(command_val !== ''){
@@ -209,7 +205,7 @@ function StoreCmd(thiscmd,event){
 				user_id: getCookie("token"),
 				command_text: command_val
 			};
-			var texthtml1 = '<p class="command_user">'+$("#user_name").text()+'\
+			var texthtml1 = '<p class="command_user">ʕっ•ᴥ•ʔっ\
 								<span class="command_line">'+command_val+'\
 								</span>\
 							</p>';
@@ -269,27 +265,28 @@ function storelike(thislike){
 }
 
 
-function add_article(){
+function add_anmsarticle(){
 	var articleArray="";
 	var data = {
 		cookie_art: getCookie("ArtCnt"),
-		user_id :getCookie("token")
+		user_id: getCookie("token")
 	}
 
 	$.ajax({
-		url: "http://"+ host + port +"/api/add_article",
+		url: "http://"+ host + port +"/api/add_anmsarticle",
 		type: 'POST',
 		data: JSON.stringify(data),
 		contentType: "application/json;charset=utf-8",
 		async: false,
 		success: function(add){
+			console.log(add);
 			var cnt;
 			for(cnt=0;cnt<add.length;cnt++){
 				if(add[cnt].article_text && add[cnt].article_picture)
 				{
 					var texthtml1 = '<section style="%%" class="article_id" id=\"'+add[cnt].article_id+'\">\
 										<div>\
-											<h3 class="user_id">'+add[cnt].user_name+'</h3>\
+											<h3 class="user_id">第'+(cookcnt+1)+'篇文章</h3>\
 											<p class="article_test">'+ add[cnt].article_text +'<br/><br/><img class="resImg" src= "'+ add[cnt].article_picture +'"/></p>\
 										</div>';
 				}
@@ -297,7 +294,7 @@ function add_article(){
 				{
 					var texthtml1 = '<section style="%%" class="article_id" id=\"'+add[cnt].article_id+'\">\
 										<div>\
-											<h3 class="user_id">'+add[cnt].user_name+'</h3>\
+											<h3 class="user_id">第'+(cookcnt+1)+'篇文章</h3>\
 											<p class="article_test">'+ add[cnt].article_text +'</p>\
 										</div>';
 				}
@@ -305,20 +302,20 @@ function add_article(){
 				{
 					var texthtml1 = '<section style="%%" class="article_id" id=\"'+add[cnt].article_id+'\">\
 										<div>\
-											<h3 class="user_id">'+add[cnt].user_name+'</h3>\
+											<h3 class="user_id">第'+(cookcnt+1)+'篇文章</h3>\
 											<p class="article_test"><br/><br/><img class="resImg" src="'+ add[cnt].article_picture +'"/></p>\
 										</div>';
 				}
 
-				if(add[cnt].like_id)
+				if(add[cnt].user_id == getCookie("token"))
 				{
 					var texthtml2 = '<div class="command"><!--文章底下-->\
 											<img class="like" style="background:red" src="img/heart2.svg" alt="" width="30px" height="30px" onclick = "storelike(this)">\
 											<label class="like_counter">'+add[cnt].likes+'</label>\
 											<hr/>\
 											<div class="form-group row col-12 col-md-12">\
-												<label for="" class="col-3 col-md-2 col-form-label command_id">'+$("#user_name").text()+'</label>\
-												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreCmd(this,event)">\
+												<label for="" class="col-3 col-md-2 col-form-label command_id">匿名</label>\
+												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreanmsCmd(this,event)">\
 											</div>\
 											<div class="container">\
 												<button type="button" class="btn btn-secondary  open" onclick = "collapse(this)">展開/收合</button>\
@@ -331,15 +328,15 @@ function add_article(){
 										</div>\
 									</section><br>';
 				}
-				else if(!add[cnt].like_id)
+				else if(add[cnt].user_id != getCookie("token"))
 				{
 					var texthtml2 = '<div class="command"><!--文章底下-->\
 											<img class="like" src="img/heart2.svg" alt="" width="30px" height="30px" onclick = "storelike(this)">\
 											<label class="like_counter">'+add[cnt].likes+'</label>\
 											<hr/>\
 											<div class="form-group row col-12 col-md-12">\
-												<label for="" class="col-3 col-md-2 col-form-label command_id">'+$("#user_name").text()+'</label>\
-												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreCmd(this,event)">\
+												<label for="" class="col-3 col-md-2 col-form-label command_id">匿名</label>\
+												<input type="text" class="col-5 col-md-6 form-control cmd" id="cmd" name="user_text" placeholder="留言..." onkeyup="StoreanmsCmd(this,event)">\
 											</div>\
 											<div class="container">\
 												<button type="button" class="btn btn-secondary  open" onclick = "collapse(this)">展開/收合</button>\
@@ -355,11 +352,11 @@ function add_article(){
 				var finialhtml = texthtml1+texthtml2;
 				if(cnt % 2 == 0){
 					var newHtml = finialhtml.replace('%%', 'background:#FFF7FB');
-					$(".lib").append(newHtml);
+					$(".anmslib").append(newHtml);
 					setArt("ArtCnt",cookcnt++);
 				}else{
 					var secondHtml = finialhtml.replace('%%', 'background:#ECFFFF');
-					$(".lib").append(secondHtml);
+					$(".anmslib").append(secondHtml);
 					setArt("ArtCnt",cookcnt++);
 				}
 				if(add.length-1 ==cnt)
@@ -372,18 +369,18 @@ function add_article(){
 	});
 	if(articleArray!="")
 	{
-		var data = {
+		var comd_data = {
 			article_id: articleArray
 		}
 		$.ajax({
-			url: "http://"+ host + port +"/api/take_command",
+			url: "http://"+ host + port +"/api/take_anmscommand",
 			type: 'POST',
-			data: JSON.stringify(data),
+			data: JSON.stringify(comd_data),
 			contentType: "application/json;charset=utf-8",
 			success: function(add_comd){
 				var cnt1;
 				for(cnt1=0;cnt1<add_comd.length;cnt1++){
-					var texthtml1 = '<p class="command_user">'+add_comd[cnt1].user_name+'\
+					var texthtml1 = '<p class="command_user">ʕっ•ᴥ•ʔっ\
 										<span class="command_line">'+add_comd[cnt1].user_command+'\
 										</span>\
 									</p>';
@@ -392,13 +389,22 @@ function add_article(){
 			}
 		});
 	}
-	
+
+	$.ajax({
+		url: "http://"+ host + port +"/api/username",
+		type: 'POST',
+		data: JSON.stringify(data),
+		contentType: "application/json;charset=utf-8",
+		success: function(name){
+			$('#user_name').text(name[0].user_name);
+		}
+	})
 }
 
 
 var img_string="";
-var imgCont = document.getElementById("showImg"); 
-var ipt = document.getElementById("#picInput"); 
+var imgCont = document.getElementById("AnmsshowImg"); 
+var ipt = document.getElementById("#Anmspic"); 
 function fileUpLoad(_this){
 	var file = _this.files[0];
 	if(!/image\/\w+/.test(file.type)){ //html中已經用accept='image/*'限制上傳的是圖片了，此處判斷可省略
@@ -413,7 +419,6 @@ function fileUpLoad(_this){
 	var fileReader = new FileReader();
 	fileReader.readAsDataURL(file);//將檔案讀取為Data URL 讀取結果放在result中
 	fileReader.onload = function(e){
-		//var img = new Image,
 		var img = '<img src="'+this.result+'"width=250px; height=250px;/>';
 		imgCont.innerHTML = img;
 		img_string = this.result
@@ -425,17 +430,17 @@ function fileUpLoad(_this){
 
 /*store article and reload index.html*/
 function article(){
-	if($('#Article').val() == '' && $('#picInput').val() == ''){
+	if($('#AnmsArticle').val() == '' && $('#Anmspic').val() == ''){
 		alertMsg(NullPost);
 	}
 	else{
 		var post_data = {
 			user_id : getCookie("token"),
-			post_level : '0',
-			article_text : $('#Article').val(),
+			post_level : '3',
+			article_text : $('#AnmsArticle').val(),
 			article_pic : img_string
 		};
-		console.log(post_data.article_pic);
+		console.log(post_data);
 		$.ajax({
 			url: "http://"+ host + port +"/api/index",
 			type: 'POST',
@@ -444,8 +449,6 @@ function article(){
 			success: function(msg){
 				if(msg=="success")
 					location.reload();
-				else
-					alertMsgThenGoToSomewhere(FailedPost, "./index.html")
 			},
 			error: function(xhr, ajaxOptions, thrownError){
 				alertMsg(ErrorMsg);
