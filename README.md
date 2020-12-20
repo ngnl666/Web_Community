@@ -27,55 +27,10 @@
     ∙ Host : 34.105.17.84
     ∙ Port: 3306
     ∙ 使用者 : root
-    ∙ 密碼 : 406261688
-    ∙ 資料庫名稱：專題資料庫
-
-## 資料庫 Table 列表
-    ∙ user_info (使用者資訊)
-        * user_id (fireBase UID) <- Primary Key
-            型別 : VARCHAR(50)
-            空值 : NOT NULL
-        * user_password (使用者密碼)
-            型別 : VARCHAR(100)
-            空值 : NOT NULL
-        * user_picture (使用者頭貼)
-            型別 : BLOB
-        * user_email (使用者信箱)
-            型別 : VARCHAR(100)
-            空值 : NOT NULL
-        * user_gender (使用者性別)
-            型別 : VARCHAR(50)
-            空值 : NOT NULL
-        * user_age (使用者生日)
-            型別 : DATE
-            空值 : NOT NULL
-        * user_name (使用者暱稱)
-            型別 : VARCHAR(50)
-            空值 : NOT NULL
-        * user_hobby (使用者愛好) <- Primary Key
-            型別 : VARCHAR(100)
-        * user_like_country (使用者喜歡國家)
-            型別 : VARCHAR(100)
-        * user_change (使用者交換才能)
-            型別 : VARCHAR(100)
-        * user_try (使用者想嘗試的事情)
-            型別 : VARCHAR(100)
 
 ## API 列表
 * Host : 34.105.17.84
 * Port : 3000
-```
-    * 測試連線
-        API : /api/testConnect
-        Method : GET
-        Output : 若成功回傳則會輸出 success，可用來簡易測試是否連線
-
-    * 註冊
-        API : /api/signup
-        Method : POST
-        Input : 使用者名稱、信箱、密碼、生日、性別
-        Output : 成功註冊、帳號已存在、無效帳號
-```
 
 ## 伺服器檔案架構
 * Path : /var/www/html/
@@ -121,63 +76,4 @@
 |   ├── signup.html (註冊)
 └── └── createNew.html (申請新密碼)
 ```
-
-## 更新紀錄
-    . 2020.10.14
-            * 更新main.js
-            * 更新index.js
-    . 2020.10.14
-        * 更新index.html
-        * 更新index.js
-    . 2020.10.08
-        * 更新index.html
-        * 更新index.js
-    . 2020.10.11
-        * 更新login.html
-        * 更新common.js
-        * 新增login.js
-        * 更新main.js
-        * 更新index.js
-    . 2020.10.08
-        * 更新index.js
-        * 更新index.html
-        * 新增createNew.html
-        * 更新common.js
-        * 更新createNew.js
-        * 更新style.css
-        * 更新main.js
-    . 2020.10.04
-        * 更新main.js
-        * 更新profile.js
-        * 更新profile.html
-        * 更新index.html
-        * 更新style.css
-        * 更新index.js 
-    . 2020.10.03
-        * 更新forgot.html
-        * 更新main.js
-        * 更新common.js
-        * 新增forgot.js
-    . 2020.09.29
-        * 更新main.js
-        * 更新profile.js
-        * 更新profile.html
-    ∙ 2020.09.24
-        * 更新style.css
-        * 更新createNew.html  
-        * 更新group.html
-        * 更新index.js
-        * 更新main.js
-        * 更新profile.js
-        * 更新common.js
-    ∙ 2020.09.19
-        * 更新style.css
-        * 新增createNew.html
-    ∙ 2020.09.12
-        * 更新index.js
-    ∙ 2020.09.08
-        * 更新README.md
-        * 更新main.js
-        * 更新index.js
-        * 更新common.js
 
