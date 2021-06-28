@@ -1,4 +1,6 @@
 # 畢業專題  CONNECT
+![image](https://user-images.githubusercontent.com/50672302/123676210-3745e480-d876-11eb-8256-2726f5837fe4.png)
+
 
 ## DEMO
 http://34.105.17.84/Web_Community/Web/login.html  
