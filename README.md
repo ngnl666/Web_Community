@@ -1,5 +1,13 @@
 # 畢業專題  CONNECT
 
+## DEMO
+http://34.105.17.84/Web_Community/Web/login.html  
+```
+測試用帳號: daniel9563769@gmail.com
+測試用密碼: 1234567890
+```
+*#### 請重新整理多次後再進行登入，經過一段時間即可進入主頁面*
+
 ## 開發環境與使用套件
     ∙ 伺服器 : Google Cloud Platform (GCP)
     ∙ 資料庫 : MySQL
